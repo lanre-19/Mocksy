@@ -1,0 +1,60 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
+import { ProfileQuery } from "./convex/query.config";
+import "./globals.css";
+
+import { Toaster } from "@/components/ui/sonner";
+import { ConvexClientProvider } from "./convex/provider";
+
+import { ThemeProvider } from "@/theme/provider";
+import ReduxProvider from "./redux/provider";
+import { ConvexUserRaw, normalizeProfile } from "./types/user";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Mocksy",
+  description: "The next generation of design.",
+};
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const rawProfile = await ProfileQuery();
+  const profile = normalizeProfile(rawProfile._valueJSON as unknown as ConvexUserRaw | null);
+
+  return (
+    <ConvexAuthNextjsServerProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <ConvexClientProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <ReduxProvider preloadedState={{ profile }}>
+                {children}
+                <Toaster />
+              </ReduxProvider>
+            </ThemeProvider>
+          </ConvexClientProvider>
+        </body>
+      </html>
+    </ConvexAuthNextjsServerProvider>
+  );
+}
