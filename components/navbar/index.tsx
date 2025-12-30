@@ -27,6 +27,7 @@ const Navbar = () => {
 
     const projectId = params.get("project");
 
+    // TODO: Add credits logic
     const me = useAppSelector((state) => state.profile);
 
     const tabs: TabProps[] = [
