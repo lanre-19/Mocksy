@@ -30,16 +30,19 @@ const Navbar = () => {
     // TODO: Add credits logic
     const me = useAppSelector((state) => state.profile);
 
+    // Encode the username if it exists
+    const encodedUserName = me.name ? encodeURIComponent(me.name) : null;
+
     // Tabs for the navbar
     const tabs: TabProps[] = [
         {
             label: "Canvas",
-            href: `/dashboard/${me.name}/canvas?project=${projectId}`,
+            href: encodedUserName && projectId ? `/dashboard/${encodedUserName}/canvas?project=${projectId}` : "#",
             icon: <Hash className="w-4 h-4" />
         },
         {
             label: "Style Guide",
-            href: `/dashboard/${me.name}/style-guide?project=${projectId}`,
+            href: encodedUserName && projectId ? `/dashboard/${encodedUserName}/style-guide?project=${projectId}` : "#",
             icon: <LayoutTemplate className="w-4 h-4" />
         },
     ];

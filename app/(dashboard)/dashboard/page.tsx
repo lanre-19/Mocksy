@@ -7,7 +7,6 @@ import { combinedSlug } from "@/lib/utils";
 const Page = async () => {
     const { entitlement, profileName } = await SubscriptionEntitlementQuery();
 
-    // Redirect to billing page if there's no active subscription entitlement
     if (!entitlement._valueJSON) {
         redirect(`/billing/${combinedSlug(profileName!)}`);
     }
