@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import CreateProject from "../buttons/project";
 
-import { cn, combinedSlug } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type TabProps = {
     label: string;
