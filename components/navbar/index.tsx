@@ -34,12 +34,12 @@ const Navbar = () => {
     const tabs: TabProps[] = [
         {
             label: "Canvas",
-            href: `/dashboard/canvas?project=${projectId}`,
+            href: `/dashboard/${me.name}/canvas?project=${projectId}`,
             icon: <Hash className="w-4 h-4" />
         },
         {
             label: "Style Guide",
-            href: `/dashboard/style-guide?project=${projectId}`,
+            href: `/dashboard/${me.name}/style-guide?project=${projectId}`,
             icon: <LayoutTemplate className="w-4 h-4" />
         },
     ];
