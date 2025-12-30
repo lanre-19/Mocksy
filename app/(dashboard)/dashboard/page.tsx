@@ -7,7 +7,7 @@ import { combinedSlug } from "@/lib/utils";
 const Page = async () => {
     const { entitlement, profileName } = await SubscriptionEntitlementQuery();
 
-    // Redirect user to sign in if there'sno existing profile
+    // Redirect user to sign in if there's no existing profile
     if (!profileName) {
         redirect("/sign-in");
     }
