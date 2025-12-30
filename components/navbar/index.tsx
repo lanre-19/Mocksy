@@ -30,6 +30,7 @@ const Navbar = () => {
     // TODO: Add credits logic
     const me = useAppSelector((state) => state.profile);
 
+    // Tabs for the navbar
     const tabs: TabProps[] = [
         {
             label: "Canvas",
