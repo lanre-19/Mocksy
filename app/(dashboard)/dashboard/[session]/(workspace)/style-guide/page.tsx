@@ -42,7 +42,6 @@ const StyleGuidePage = async ({ searchParams }: StyleGuidePageProps) => {
             <TabsContent value="moodboard">
                 <Moodboard imagesGuide={imagesGuide} />
             </TabsContent>
-            
             {/* Colors Tab */}
             <TabsContent
                 value="colors"
