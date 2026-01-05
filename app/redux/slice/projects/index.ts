@@ -73,7 +73,7 @@ const projectSlice = createSlice({
             state,
             action: PayloadAction<string>
         ) => {
-            state.isLoading = true;
+            state.isCreating = false;
             state.createError = action.payload;
         },
         // Project add state
