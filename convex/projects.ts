@@ -149,6 +149,11 @@ export const getProjectStyleGuide = query({
             throw new Error("Project not found or access denied");
         }
 
-        return project.styleGuide ? JSON.parse(project.styleGuide) : null;
+        try {
+            return project.styleGuide ? JSON.parse(project.styleGuide) : null;
+        } catch (error) {
+            console.error("Failed to parse style guide JSON:", error);
+            return null;
+        }
     }
 });
