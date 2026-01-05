@@ -1,6 +1,11 @@
 "use client";
 
-import { addProject, createProjectFailure, createProjectStart, createProjectSuccess } from "@/app/redux/slice/projects";
+import {
+    addProject,
+    createProjectFailure,
+    createProjectStart,
+    createProjectSuccess
+} from "@/app/redux/slice/projects";
 import { useAppDispatch, useAppSelector } from "@/app/redux/store";
 import { toast } from "sonner";
 import { fetchMutation } from "convex/nextjs";
@@ -71,11 +76,11 @@ export const useProjectCreation = () => {
 
         } catch (error) {
             // Dispatch the create project failure state
-            dispatch(createProjectFailure("Failed to create project"));
+            dispatch(createProjectFailure("Failed to create project."));
 
-            toast.error("Failed to create project");
+            toast.error("Failed to create project.");
 
-            console.log("Failed to create project", error);
+            console.log("Failed to create project.", error);
         }
     };
 

@@ -7,13 +7,17 @@ import { combinedSlug } from "@/lib/utils";
 const Page = async () => {
     const { entitlement, profileName } = await SubscriptionEntitlementQuery();
 
-    // // Redirect to billing page if there's no active subscription entitlement
-    // if (!entitlement._valueJSON) {
-    //     redirect(`/billing/${combinedSlug(profileName!)}`);
-    // }
+    // Redirect user to sign in if there's no existing profile
+    if (!profileName) {
+        redirect("/sign-in");
+    }
+
+    if (!entitlement._valueJSON) {
+        redirect(`/billing/${combinedSlug(profileName)}`);
+    }
 
     // Redirect to dashboard if the user has an active subscription
-    redirect(`/dashboard/${combinedSlug(profileName!)}`);
+    redirect(`/dashboard/${combinedSlug(profileName)}`);
 }
  
 export default Page;

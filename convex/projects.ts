@@ -33,6 +33,13 @@ export const createProject = mutation({
         thumbnail: v.optional(v.string())
     },
     handler: async (ctx, { userId, name, sketchesData, thumbnail }) => {
+        const authUserId = await getAuthUserId(ctx);
+
+        // Ensure the user is authenticated
+        if (userId !== authUserId) {
+            throw new Error("Unauthorized");
+        }
+
         console.log("[Convex] Creating project for user: ", userId);
 
         // project number
@@ -88,3 +95,60 @@ async function getNextProjectNumber (ctx: any, userId: string) {
 
     return projectNumber;
 };
+
+export const getUserProjects = query({
+    args: {
+        userId: v.id("users"),
+        limit: v.optional(v.number())
+    },
+    handler: async (ctx, { userId, limit = 20 }) => {
+        const authUserId = await getAuthUserId(ctx);
+        
+        // Ensure the user is authenticated and requesting their own projects
+        if (!authUserId || authUserId !== userId) {
+            throw new Error("Unauthorized");
+        }
+
+        // Fetch all user's projects from the DB
+        const allProjects = await ctx.db
+          .query("projects")
+          .withIndex("by_userId", (q) => q.eq("userId", userId))
+          .order("desc")
+          .collect();
+
+        const projects = allProjects.slice(0, limit);
+
+        return projects.map((project) => ({
+            _id: project._id,
+            name: project.name,
+            projectNumber: project.projectNumber,
+            thumbnail: project.thumbnailUrl,
+            lastModified: project.lastModified,
+            createdAt: project.createdAt,
+            isPublic: project.isPublic
+        }));
+    }
+});
+
+export const getProjectStyleGuide = query({
+    args: {
+        projectId: v.id("projects") },
+    handler: async (ctx, { projectId }) => {
+        const userId = await getAuthUserId(ctx);
+
+        // Ensure the user is authenticated
+        if (!userId) {
+            throw new Error("Unauthorized");
+        }
+
+        // Fetch the project from the database
+        const project = await ctx.db.get(projectId);
+
+        // Ensure the project exists and belongs to the authenticated user
+        if (!project || project.userId !== userId) {
+            throw new Error("Project not found or access denied");
+        }
+
+        return project.styleGuide ? JSON.parse(project.styleGuide) : null;
+    }
+});

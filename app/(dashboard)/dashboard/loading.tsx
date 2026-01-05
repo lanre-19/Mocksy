@@ -17,7 +17,7 @@ const Loading = () => {
                         Loading Dashboard
                     </p>
                     <p className="text-xs text-muted-foreground">
-                        Please wait while we set things up for you.
+                        Please wait while we set things up for you...
                     </p>
                 </div>
             </div>
