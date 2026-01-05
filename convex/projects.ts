@@ -33,10 +33,10 @@ export const createProject = mutation({
         thumbnail: v.optional(v.string())
     },
     handler: async (ctx, { userId, name, sketchesData, thumbnail }) => {
-        // const authUserId = await getAuthUserId(ctx);
+        const authUserId = await getAuthUserId(ctx);
 
         // Ensure the user is authenticated
-        if (!userId) {
+        if (userId !== authUserId) {
             throw new Error("Unauthorized");
         }
 
@@ -102,6 +102,13 @@ export const getUserProjects = query({
         limit: v.optional(v.number())
     },
     handler: async (ctx, { userId, limit = 20 }) => {
+        const authUserId = await getAuthUserId(ctx);
+        
+        // Ensure the user is authenticated and requesting their own projects
+        if (!authUserId || authUserId !== userId) {
+            throw new Error("Unauthorized");
+        }
+
         // Fetch all user's projects from the DB
         const allProjects = await ctx.db
           .query("projects")
@@ -115,7 +122,7 @@ export const getUserProjects = query({
             _id: project._id,
             name: project.name,
             projectNumber: project.projectNumber,
-            thumnail: project.thumbnailUrl,
+            thumbnail: project.thumbnailUrl,
             lastModified: project.lastModified,
             createdAt: project.createdAt,
             isPublic: project.isPublic

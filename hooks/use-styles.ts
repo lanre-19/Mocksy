@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -50,6 +50,10 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
     // Function to upload an image to storage
     const uploadImage = async (file: File): Promise<{ storageId: string, url?: string }> => {
         try {
+            if (!projectId) {
+                throw new Error("Project ID is required");
+            }
+
             // Generate an upload URL from the server
             const uploadUrl = await generateUploadUrl();
 
@@ -114,6 +118,8 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
 
                         // Update existing image with server data
                         mergedImages[clientIndex] = serverImage;
+                    } else {
+                        mergedImages.push(serverImage);
                     }
                 });
 
@@ -121,6 +127,8 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
             }
         }
     }, [imagesGuide, getValues, setValue]);
+
+    const urlsRef = useRef<Set<string>>(new Set());
 
     // Function to add a new image to the moodboard
     const addImage = (file: File) => {
@@ -138,6 +146,8 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
             uploading: false,
             isFromServer: false,
         };
+
+        urlsRef.current.add(newImage.preview);
 
         // Update the images array in the form state
         const updatedImages = [...images, newImage];
@@ -171,6 +181,7 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
             if (img.id === imageId) {
                 if (!img.isFromServer && img.preview.startsWith("blob:")) {
                     URL.revokeObjectURL(img.preview);
+                    urlsRef.current.delete(img.preview);
                 }
 
                 return false;
@@ -212,10 +223,13 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
             return;
         }
 
+        let currentCount = images.length;
+
         // Add each image file to the moodboard
         imageFiles.forEach((file) => {
-            if (images.length < 5) {
+            if (currentCount < 5) {
                 addImage(file);
+                currentCount++;
             }
         });
     };
@@ -224,12 +238,21 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
 
+        let currentCount = images.length;
+
         // Add each selected file to the moodboard
-        files.forEach((file) => addImage(file));
+        files.forEach((file) => {
+            if (currentCount < 5) {
+                addImage(file);
+                currentCount++;
+            }
+        });
 
         // Reset the file input value to allow re-uploading the same file if needed
         e.target.value = "";
     };
+
+    const uploadingRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
         const uploadPendingImages = async () => {
@@ -240,8 +263,11 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
                 const image = currentImages[i];
 
                 // Upload only if not already uploaded, not uploading, and no error
-                if (!image.uploaded && !image.uploading && !image.error) {
+                if (!image.uploaded && !image.uploading && !image.error && !uploadingRef.current.has(image.id)) {
                     const updatedImages = [...currentImages];
+
+                    // Mark as currently uploading in ref (synchronous guard)
+                    uploadingRef.current.add(image.id);
 
                     // Mark image as uploading
                     updatedImages[i] = { ...image, uploading: true };
@@ -255,6 +281,8 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
                         const finalImages = getValues("images");
 
                         const finalIndex = finalImages.findIndex((img) => img.id === image.id);
+
+                        uploadingRef.current.delete(image.id);
                         
                         // Update the image with the storage ID and mark as uploaded
                         if (finalIndex !== -1) {
@@ -270,6 +298,7 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
                         }
                     } catch (error) {
                         console.error("Upload failed for image:", image.id, error);
+                        uploadingRef.current.delete(image.id);
                         const errorImages = getValues("images");
                         const errorIndex = errorImages.findIndex((img) => img.id === image.id);
 
@@ -282,6 +311,8 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
                             };
 
                             setValue("images", [...errorImages]);
+                        } else {
+                            console.warn("Image not found after upload:", image.id);
                         }
                     }
                 }
@@ -300,6 +331,12 @@ export const useMoodboard = (imagesGuide: MoodboardImage[]) => {
             images.forEach((image) => {
                 URL.revokeObjectURL(image.preview);
             });
+
+            urlsRef.current.forEach((url) => {
+                URL.revokeObjectURL(url);
+            });
+            
+            urlsRef.current.clear();
         }
     }, []);
 

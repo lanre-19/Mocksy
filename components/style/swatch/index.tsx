@@ -13,20 +13,22 @@ const ColorSwatch = ({ name, value, className }: ColorSwatchProps) => {
             className
         )}>
             <div
-              className="w-12 h-12 rounded-lg border border-border/20 flex-shrink-0"
-              style={{ backgroundColor: value }}
-            >
-                <div className="space-y-1 min-w-0 flex-1">
-                    <h4 className="text-sm font-medium text-foreground">
-                        {name}
-                    </h4>
-                    <p className="text-xs text-muted-foreground font-mono uppercase">
-                        {value}
-                    </p>
-                </div>
+                className="w-12 h-12 rounded-lg border border-border/20 flex-shrink-0"
+                style={{ backgroundColor: value }}
+                role="img"
+                aria-label={`${name} color swatch: ${value}`}
+            />
+            
+            <div className="space-y-1 min-w-0 flex-1">
+                <h4 className="text-sm font-medium text-foreground">
+                    {name}
+                </h4>
+                <p className="text-xs text-muted-foreground font-mono uppercase">
+                    {value}
+                </p>
             </div>
         </div>
     );
 }
- 
+
 export default ColorSwatch;

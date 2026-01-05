@@ -7,7 +7,7 @@ import ProjectsList from "@/components/projects/list";
 const Page = async () => {
     const { profile, projects } = await ProjectQuery();
 
-    // Redirect users to sign in page is there's no profile
+    // Redirect users to sign in page if there's no profile
     if (!profile) {
         redirect("/sign-in");
     }

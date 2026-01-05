@@ -52,7 +52,7 @@ const StyleGuideLayout = ({ children }: { children: React.ReactNode }) => {
                                             {tab.label}
                                         </span>
                                         <span className="sm:hidden">
-                                            {tab.value}
+                                            {tab.label}
                                         </span>
                                     </TabsTrigger>
                                 );

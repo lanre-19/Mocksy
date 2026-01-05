@@ -49,14 +49,14 @@ const StyleGuideTypography = ({ typographyGuide }: StyleGuideTypographyProps) =>
                                         </div>
 
                                         <div
-                                          className="text-foreground"
-                                          style={{
-                                            fontFamily: style.fontFamily,
-                                            fontSize: style.fontSize,
-                                            fontWeight: style.fontWeight,
-                                            lineHeight: style.lineHeight,
-                                            letterSpacing: style.letterSpacing || "normal"
-                                          }}
+                                            className="text-foreground"
+                                            style={{
+                                                fontFamily: style.fontFamily,
+                                                fontSize: style.fontSize,
+                                                fontWeight: style.fontWeight,
+                                                lineHeight: style.lineHeight,
+                                                letterSpacing: style.letterSpacing || "normal"
+                                            }}
                                         >
                                             The quick brown fox jumps over the lazy dog.
                                         </div>
@@ -66,7 +66,7 @@ const StyleGuideTypography = ({ typographyGuide }: StyleGuideTypographyProps) =>
                                                 Font: {style.fontFamily}
                                             </div>
                                             <div>
-                                                Size: {style.fontSize}px
+                                                Size: {typeof style.fontSize === 'number' ? `${style.fontSize}px` : style.fontSize}
                                             </div>
                                             <div>
                                                 Weight: {style.fontWeight}

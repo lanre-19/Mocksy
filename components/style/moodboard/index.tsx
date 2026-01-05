@@ -42,6 +42,8 @@ const Moodboard = ({ imagesGuide }: MoodboardProps) => {
                 onChange={handleFileInput}
             />
             <div
+                role="region"
+                aria-label="Moodboard drop zone"
                 className={cn(
                     "relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-200 min-h-[500px] flex items-center justify-center",
                     dragActive ? "border-primary bg-primary/5 scale-[1.02]" : "border-border/50 hover:border-border"
