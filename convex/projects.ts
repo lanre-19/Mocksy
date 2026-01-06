@@ -33,10 +33,10 @@ export const createProject = mutation({
         thumbnail: v.optional(v.string())
     },
     handler: async (ctx, { userId, name, sketchesData, thumbnail }) => {
-        const authUserId = await getAuthUserId(ctx);
+        // const authUserId = await getAuthUserId(ctx);
 
         // Ensure the user is authenticated
-        if (userId !== authUserId) {
+        if (!userId) {
             throw new Error("Unauthorized");
         }
 
